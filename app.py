@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, send_file
 import numpy as np
 import time
 
-# Imposta Matplotlib al backend "Agg" per evitare problemi di threading
+# Set Matplotlib to the "Agg" backend to avoid threading issues
 plt.switch_backend('Agg')
 
 app = Flask(__name__)
@@ -12,55 +12,55 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Leggi il dataset dal form (5 righe di valori x e y)
+        # Read the dataset from the form (5 rows of x and y values)
         dataset = []
         for i in range(5):
             x = float(request.form.get(f"x{i}"))
             y = float(request.form.get(f"y{i}"))
             dataset.append((x, y))
 
-        # Coefficienti per il modello lineare
+        # Coefficients for the linear model
         a0 = float(request.form.get("a0", 1) or 1)
         a1 = float(request.form.get("a1", 1) or 1)
 
-        # Coefficienti per il modello polinomiale
+        # Coefficients for the polynomial model
         b0 = float(request.form.get("b0", 1) or 1)
         b1 = float(request.form.get("b1", 1) or 1)
         b2 = float(request.form.get("b2", 1) or 1)
 
-        # Calcolo delle predizioni e dei residui per il modello lineare
+        # Calculate predictions and residuals for the linear model
         linear_calculations = []
         cost_linear = 0
         for x, y in dataset:
             predicted_linear = a0 + a1 * x
-            residuo_lineare = y - predicted_linear
-            residuo_quadrato_lineare = residuo_lineare ** 2
-            cost_linear += residuo_quadrato_lineare
+            linear_residual = y - predicted_linear
+            squared_linear_residual = linear_residual ** 2
+            cost_linear += squared_linear_residual
             linear_calculations.append({
                 "x": x, "y": y, "predicted": predicted_linear,
-                "residuo": residuo_lineare, "residuo_quadrato": residuo_quadrato_lineare
+                "residual": linear_residual, "squared_residual": squared_linear_residual
             })
 
-        # Calcolo delle predizioni e dei residui per il modello polinomiale
+        # Calculate predictions and residuals for the polynomial model
         polynomial_calculations = []
         cost_polynomial = 0
         for x, y in dataset:
             predicted_polynomial = b0 + b1 * x + b2 * (x ** 2)
-            residuo_polinomiale = y - predicted_polynomial
-            residuo_quadrato_polinomiale = residuo_polinomiale ** 2
-            cost_polynomial += residuo_quadrato_polinomiale
+            polynomial_residual = y - predicted_polynomial
+            squared_polynomial_residual = polynomial_residual ** 2
+            cost_polynomial += squared_polynomial_residual
             polynomial_calculations.append({
                 "x": x, "y": y, "predicted": predicted_polynomial,
-                "residuo": residuo_polinomiale, "residuo_quadrato": residuo_quadrato_polinomiale
+                "residual": polynomial_residual, "squared_residual": squared_polynomial_residual
             })
 
-        # Determina il modello migliore
-        best_model = "Modello Lineare" if cost_linear < cost_polynomial else "Modello Polinomiale"
+        # Determine the best model
+        best_model = "Linear Model" if cost_linear < cost_polynomial else "Polynomial Model"
 
-        # Calcolo del timestamp per evitare cache
+        # Calculate timestamp to avoid cache
         timestamp = int(time.time())
 
-        # Passa i dati al template per visualizzarli
+        # Pass data to the template for display
         return render_template("index.html", dataset=dataset, cost_linear=cost_linear,
                                cost_polynomial=cost_polynomial, best_model=best_model,
                                linear_calculations=linear_calculations,
@@ -70,7 +70,7 @@ def index():
 
 @app.route("/plot/<int:plot_type>")
 def plot(plot_type):
-    # Ricevi i parametri dalla query string con valori predefiniti
+    # Get parameters from the query string with default values
     try:
         a0 = float(request.args.get("a0", 1) or 1)
         a1 = float(request.args.get("a1", 1) or 1)
@@ -80,33 +80,33 @@ def plot(plot_type):
         x_values = [float(x) for x in request.args.getlist("x")]
         y_values = [float(y) for y in request.args.getlist("y")]
     except ValueError:
-        return "Errore nei parametri: assicurarsi che i coefficienti e i valori x/y siano numeri.", 400
+        return "Parameter error: ensure that coefficients and x/y values are numbers.", 400
 
     fig, ax = plt.subplots()
 
-    # Grafico del dataset originale
+    # Plot the original dataset
     if plot_type == 1:
         ax.scatter(x_values, y_values, color="blue", label="Dataset")
-        ax.set_title("Punti del Dataset Originale")
+        ax.set_title("Original Dataset Points")
         ax.legend()
 
-    # Funzione lineare con i punti del dataset
+    # Linear function with dataset points
     elif plot_type == 2:
         y_linear = [a0 + a1 * x for x in x_values]
-        ax.plot(x_values, y_linear, color="red", label="Modello Lineare")
+        ax.plot(x_values, y_linear, color="red", label="Linear Model")
         ax.scatter(x_values, y_values, color="blue", label="Dataset")
-        ax.set_title("Modello Lineare e Punti del Dataset")
+        ax.set_title("Linear Model and Dataset Points")
         ax.legend()
 
-    # Funzione polinomiale con i punti del dataset
+    # Polynomial function with dataset points
     elif plot_type == 3:
         y_polynomial = [b0 + b1 * x + b2 * (x ** 2) for x in x_values]
-        ax.plot(x_values, y_polynomial, color="green", label="Modello Polinomiale")
+        ax.plot(x_values, y_polynomial, color="green", label="Polynomial Model")
         ax.scatter(x_values, y_values, color="blue", label="Dataset")
-        ax.set_title("Modello Polinomiale e Punti del Dataset")
+        ax.set_title("Polynomial Model and Dataset Points")
         ax.legend()
 
-    # Salva il grafico come immagine PNG
+    # Save the plot as a PNG image
     img = io.BytesIO()
     plt.savefig(img, format="png")
     img.seek(0)
