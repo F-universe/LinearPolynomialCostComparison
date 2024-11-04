@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confronto Funzioni di Costo</title>
+    <title>Cost Function Comparison</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -120,9 +120,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>Inserisci Dataset e Coefficienti del Modello</h1>
+        <h1>Enter Dataset and Model Coefficients</h1>
         <form method="POST">
-            <h2>Dataset (Inserisci i valori di x e y per ciascuna riga)</h2>
+            <h2>Dataset (Enter x and y values for each row)</h2>
             <table>
                 <tr>
                     <th>x</th>
@@ -136,13 +136,13 @@
                 {% endfor %}
             </table>
 
-            <h2>Coefficienti del Modello Lineare</h2>
+            <h2>Linear Model Coefficients</h2>
             <label for="a0">a₀:</label>
             <input type="number" id="a0" name="a0" step="any" required>
             <label for="a1">a₁:</label>
             <input type="number" id="a1" name="a1" step="any" required>
 
-            <h2>Coefficienti del Modello Polinomiale (Grado 2)</h2>
+            <h2>Polynomial Model Coefficients (Degree 2)</h2>
             <label for="b0">b₀:</label>
             <input type="number" id="b0" name="b0" step="any" required>
             <label for="b1">b₁:</label>
@@ -150,86 +150,86 @@
             <label for="b2">b₂:</label>
             <input type="number" id="b2" name="b2" step="any" required>
 
-            <button type="submit">Confronta Funzioni di Costo</button>
+            <button type="submit">Compare Cost Functions</button>
         </form>
 
         {% if cost_linear is not none and cost_polynomial is not none %}
-        <h2>Risultati delle Funzioni di Costo</h2>
+        <h2>Cost Function Results</h2>
         <table class="results-table">
             <tr>
-                <th>Modello</th>
-                <th>Costo Totale</th>
+                <th>Model</th>
+                <th>Total Cost</th>
             </tr>
             <tr>
-                <td>Modello Lineare</td>
+                <td>Linear Model</td>
                 <td>{{ cost_linear }}</td>
             </tr>
             <tr>
-                <td>Modello Polinomiale</td>
+                <td>Polynomial Model</td>
                 <td>{{ cost_polynomial }}</td>
             </tr>
         </table>
 
-        <h3>Il modello migliore è: {{ best_model }}</h3>
+        <h3>The best model is: {{ best_model }}</h3>
 
         <div class="coefficients-section">
-            <p><strong>Coefficienti Utilizzati:</strong></p>
-            <p class="formula">Modello Lineare: a₀ = {{ a0 }}, a₁ = {{ a1 }}</p>
-            <p class="formula">Modello Polinomiale: b₀ = {{ b0 }}, b₁ = {{ b1 }}, b₂ = {{ b2 }}</p>
+            <p><strong>Used Coefficients:</strong></p>
+            <p class="formula">Linear Model: a₀ = {{ a0 }}, a₁ = {{ a1 }}</p>
+            <p class="formula">Polynomial Model: b₀ = {{ b0 }}, b₁ = {{ b1 }}, b₂ = {{ b2 }}</p>
         </div>
 
-        <h2>Dettagli dei Calcoli per il Modello Lineare</h2>
+        <h2>Linear Model Calculation Details</h2>
         <table class="results-table">
             <tr>
                 <th>x</th>
                 <th>y</th>
-                <th>Predizione</th>
-                <th>Residuo</th>
-                <th>Residuo²</th>
+                <th>Prediction</th>
+                <th>Residual</th>
+                <th>Residual²</th>
             </tr>
             {% for calc in linear_calculations %}
             <tr>
                 <td>{{ calc.x }}</td>
                 <td>{{ calc.y }}</td>
                 <td>{{ calc.predicted }}</td>
-                <td>{{ calc.residuo }}</td>
-                <td>{{ calc.residuo_quadrato }}</td>
+                <td>{{ calc.residual }}</td>
+                <td>{{ calc.squared_residual }}</td>
             </tr>
             {% endfor %}
         </table>
 
-        <h2>Dettagli dei Calcoli per il Modello Polinomiale</h2>
+        <h2>Polynomial Model Calculation Details</h2>
         <table class="results-table">
             <tr>
                 <th>x</th>
                 <th>y</th>
-                <th>Predizione</th>
-                <th>Residuo</th>
-                <th>Residuo²</th>
+                <th>Prediction</th>
+                <th>Residual</th>
+                <th>Residual²</th>
             </tr>
             {% for calc in polynomial_calculations %}
             <tr>
                 <td>{{ calc.x }}</td>
                 <td>{{ calc.y }}</td>
                 <td>{{ calc.predicted }}</td>
-                <td>{{ calc.residuo }}</td>
-                <td>{{ calc.residuo_quadrato }}</td>
+                <td>{{ calc.residual }}</td>
+                <td>{{ calc.squared_residual }}</td>
             </tr>
             {% endfor %}
         </table>
 
-        <h2>Grafici</h2>
+        <h2>Graphs</h2>
         <div class="image-container">
-            <h3>Grafico del Dataset</h3>
-            <img src="/plot/1?{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Grafico del Dataset">
+            <h3>Dataset Plot</h3>
+            <img src="/plot/1?{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Dataset Plot">
         </div>
         <div class="image-container">
-            <h3>Grafico della Funzione Lineare</h3>
-            <img src="/plot/2?a0={{ a0 }}&a1={{ a1 }}&{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Grafico della Funzione Lineare">
+            <h3>Linear Model Plot</h3>
+            <img src="/plot/2?a0={{ a0 }}&a1={{ a1 }}&{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Linear Model Plot">
         </div>
         <div class="image-container">
-            <h3>Grafico della Funzione Polinomiale</h3>
-            <img src="/plot/3?b0={{ b0 }}&b1={{ b1 }}&b2={{ b2 }}&{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Grafico della Funzione Polinomiale">
+            <h3>Polynomial Model Plot</h3>
+            <img src="/plot/3?b0={{ b0 }}&b1={{ b1 }}&b2={{ b2 }}&{% for x, y in dataset %}x={{ x }}&y={{ y }}&{% endfor %}t={{ timestamp }}" alt="Polynomial Model Plot">
         </div>
         {% endif %}
     </div>
